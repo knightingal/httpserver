@@ -39,6 +39,7 @@ int main(int argc, char** argv)
     {
         //char ch;
         char buff[2048] = {0};
+        
 
         printf("server_waiting\n");
         client_len = sizeof(client_address);

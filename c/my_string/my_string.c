@@ -1,5 +1,5 @@
 #include "my_string.h"
-#include <stddef.h>
+#include <stdio.h>
 
 int cmp_string(My_string* str1, My_string* str2)
 {
@@ -99,7 +99,7 @@ int find_char_in_string(My_string* str, char ch)
 
 int split_string(My_string* str, My_string* frt, My_string* bck, char ch)
 {
-    if (ftr == NULL || bck == NULL) return -1;
+    if (frt == NULL || bck == NULL) return -1;
     int split_index = find_char_in_string(str, ch);
     if (split_index < 0) return -1;
     
@@ -113,3 +113,35 @@ int split_string(My_string* str, My_string* frt, My_string* bck, char ch)
 
     return 0;
 }
+
+void print_string(My_string* str)
+{
+    if (verify_string(str) != 0) return;
+    int i;
+    for(i = str->start_index; i != str->end_index; i++)
+    {
+        printf("%c", str->buff->buff_content[i]);
+    }
+    printf("\n");
+}
+
+int main()
+{
+    Buff buff1= {"0123456789", 10};
+    My_string parent_str = {&buff1, 2, 10};
+
+    My_string frt, bck;
+
+    int split_ret = split_string(&parent_str, &frt, &bck, 'a');
+
+
+    print_string(&parent_str);    
+
+    if (split_ret == 0)
+    {
+        print_string(&frt);
+        print_string(&bck);
+    }
+    return 0;
+}
+    

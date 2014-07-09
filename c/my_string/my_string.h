@@ -29,3 +29,7 @@ int get_string_len(My_string* str);
 char get_char_of_index(My_string* str, int index);
 
 int find_char_in_string(My_string* str, char ch);
+
+void print_string(My_string* str);
+
+int split_string(My_string* str, My_string* frt, My_string* bck, char ch);

@@ -1,5 +1,7 @@
 #include "my_string.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
 
 int cmp_string(My_string* str1, My_string* str2)
 {
@@ -125,6 +127,72 @@ void print_string(My_string* str)
     printf("\n");
 }
 
+int index_of_sub_string(My_string* str, My_string* sub)
+{
+    int str_len = get_string_len(str);
+    int sub_len = get_string_len(sub);
+    if (str_len < 0 || sub_len < 0 || str_len < sub_len)
+    {
+        return -1;
+    }
+    if (str->buff == sub->buff)
+    {
+        if (sub->start_index >= str->start_index
+                && sub->end_index <= str->end_index)
+        {
+            return sub->start_index - str->start_index;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    int i;
+    int j;
+    for (i = str->start_index; i != str->end_index; i++)
+    {
+        for (j = sub->start_index; j != sub->end_index; j++)
+        {
+            if (sub->buff->buff_content[j] 
+                    != str->buff->buff_content[i + j - sub->start_index])
+            {
+                break;
+            }
+        }
+        if (j == sub->end_index)
+        {
+            return i - str->start_index;
+        }
+    }
+    return -1;
+}
+
+int append_str(My_string* str1, My_string* str2, My_string* ret);
+{
+    int len1 = get_string_len(str1);
+    int len2 = get_string_len(str2);
+    if (ret == NULL || ret->buff == NULL || ret->buff->buff_content == NULL)
+    {
+        return -1;
+    }
+    if (len1 < 0 || len2 < 0 || len1 + len2 == 0) return -1;
+    if (len1 + len2 > ret->buff->buff_len) return -1;
+    //char* buff_content = (char*)malloc(sizeof(char) * (len1 + len2));
+    //Buff* buff = (Buff*)malloc(sizeof(Buff));
+    //buff->buff_content = buff_content;
+    //buff->buff_len = len1 + len2;
+    //buff->refered = 0;
+    char* buff_content = ret->buff->buff_content;
+    memcpy(buff_content, str1->buff->buff_content + str1->start_index, len1);
+    memcpy(buff_content + len1, str2->buff->buff_content + str2->start_index, len2);
+    //str1->buff = buff;
+    ret->start_index = 0;
+    ret->end_index = len1 + len2;
+    return 0;
+
+}
+
+
 int main()
 {
     Buff buff1= {"0123456789", 10};
@@ -137,11 +205,21 @@ int main()
 
     print_string(&parent_str);    
 
+#if 0
     if (split_ret == 0)
     {
         print_string(&frt);
         print_string(&bck);
     }
+#endif
+
+    Buff buff2 = {"1234567890", 10};
+    My_string child_str = {&buff2, 8, 10};
+    print_string(&child_str);
+    printf("sub index = %d\n", index_of_sub_string(&parent_str, &child_str));
+
+    append_str(&parent_str, &child_str);
+    print_string(&parent_str);
     return 0;
 }
     

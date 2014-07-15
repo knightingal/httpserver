@@ -58,13 +58,23 @@ int main(int argc, char** argv)
 //        ch++;
 //        write(client_sockfd, &ch, 1);
         print_string(&fd_read_buff);
+        Req_line req_line  = get_req_line(client_sockfd, &fd_read_buff);
+
+        Header header = get_header(client_sockfd, &fd_read_buff);
+#if 0
         My_string line;
         int i;
         for(i = 0; i < 4; i++)
         {
             read_line(client_sockfd, &fd_read_buff, &line);
             print_string(&line);
+
+
         }
+#endif
+        
+        print_string(&req_line.path);
+        print_string(&header.header_value);
         write(client_sockfd, resp_buff, strlen(resp_buff));
 
         close(client_sockfd);

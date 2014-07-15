@@ -9,7 +9,7 @@
 struct st_req_line
 {
     int method;
-    My_string paht;
+    My_string path;
     int version;
 };
 typedef struct st_req_line Req_line;

@@ -28,5 +28,9 @@ Header get_header(int fd, My_string* read_buff);
 
 int read_line(int fd, My_string* read_buff, My_string* line);
 
+int read_length(int fd, My_string* read_buff, My_string* out_line, int len);
+
+int Headers_count;
+
 
 #endif

@@ -61,22 +61,39 @@ My_string GET_STR = {&GET_BUFF, 0, 3};
 
 Buff CONTENT_LENGTH_BUFF =      {"Content-Length", 14, 0}; 
 My_string CONTENT_LENGTH_STR = {&CONTENT_LENGTH_BUFF, 0, 14};
+#define CONTENT_LENGTH_INDEX 0
+
 Buff ACCEPT_LANGUAGE_BUFF =     {"Accept-Language", 15, 0}; 
 My_string ACCEPT_LANGUAGE_STR = {&ACCEPT_LANGUAGE_BUFF, 0, 15};
+#define ACCEPT_LANGUAGE_INDEX 1
+
 Buff ACCEPT_ENCODING_BUFF =     {"Accept-Encoding", 15, 0};
 My_string ACCEPT_ENCODING_STR = {&ACCEPT_ENCODING_BUFF, 0, 15};
+#define ACCEPT_ENCODING_INDEX 2
+
 Buff HOST_BUFF =                {"Host", 4, 0};
 My_string HOST_STR = {&HOST_BUFF, 0, 4};
+#define HOST_INDEX 3
+
 Buff ACCEPT_BUFF =              {"Accept", 6, 0};
 My_string ACCEPT_STR = {&ACCEPT_BUFF, 0, 6};
+#define ACCEPT_INDEX 4
+
 Buff USER_AGENG_BUFF =          {"User-Agent", 10, 0};
 My_string USER_AGENG_STR = {&USER_AGENG_BUFF, 0, 10};
+#define USER_AGENG_INDEX 5
+
 Buff ACCPET_CHARSET_BUFF =      {"Accept-Charset", 14, 0};
 My_string ACCPET_CHARSET_STR = {&ACCPET_CHARSET_BUFF, 0, 14};
+#define ACCPET_CHARSET_INDEX 6
+
 Buff CONNECTION_BUFF =          {"Connection", 10, 0};
 My_string CONNECTION_STR = {&CONNECTION_BUFF, 0, 10};
+#define CONNECTION_INDEX 7
+
 Buff CONTENT_TYPE_BUFF =        {"Content-Type", 12, 0};
 My_string CONTENT_TYPE_STR = {&CONTENT_TYPE_BUFF, 0, 12};
+#define CONTENT_TYPE_INDEX 8
 
 My_string* Headers[] = {
     &CONTENT_LENGTH_STR,    
@@ -155,28 +172,75 @@ Header get_header(int fd, My_string* read_buff)
             &header_value_str, 
             ':'
     );
+    if (split_index < 0)
+    {
+        return header;
+    }
     header_value_str.start_index += 2;
     header_value_str.end_index -= 2;
     int i;
-    
 
     for (i = 0; i < Headers_count; i++)
     {
         if (cmp_string(&header_name_str, Headers[i]) == 0)
         {
-            header.header_name = i;
             break;
         }
     }
-
-
-
+    header.header_name = i;
     
     header.header_value = header_value_str;
 
     return header;
 }
 
+int read_length(int fd, My_string* read_buff, My_string* out_line, int len)
+{
+    int read_buff_len = get_string_len(read_buff);
+    if (read_buff_len < 0)
+    {
+        return -1;
+    }
+    if (out_line == NULL)
+    {
+        return -1;
+    }
+    int read_len = 0;
+    while(read_buff_len < len)
+    {
+        int whole_buff_len = read_buff_len + READ_LEN_ONCE;
+        Buff* read_buff_appended = (Buff*)malloc(sizeof(Buff));
+        read_buff_appended->buff_content = 
+            (char*)malloc(sizeof(char) * whole_buff_len);
+        read_buff_appended->buff_len = whole_buff_len;
+
+        memcpy(read_buff_appended->buff_content, 
+                read_buff->buff->buff_content + read_buff->start_index,
+                get_string_len(read_buff));
+
+        read_len = read(fd, 
+                read_buff_appended->buff_content + get_string_len(read_buff),
+                READ_LEN_ONCE
+        ); 
+        if (read_len <= 0)
+        {
+            return -1;
+        }
+
+        read_buff->buff = read_buff_appended;
+        read_buff->start_index = 0;
+        read_buff->end_index = read_buff_len + read_len;
+        read_buff_len = get_string_len(read_buff);
+    }
+    
+    out_line->buff = read_buff->buff;
+    out_line->start_index = read_buff->start_index;
+    out_line->end_index = read_buff->start_index + len;
+
+    read_buff->start_index = out_line->end_index;
+
+    return len;
+}
 
 
     

@@ -60,7 +60,26 @@ int main(int argc, char** argv)
         print_string(&fd_read_buff);
         Req_line req_line  = get_req_line(client_sockfd, &fd_read_buff);
 
-        Header header = get_header(client_sockfd, &fd_read_buff);
+        print_string(&req_line.path);
+
+        My_string* headers 
+            = (My_string*)malloc(sizeof(My_string) * Headers_count);
+        Header header;
+        while(1)
+        {
+            header = get_header(client_sockfd, &fd_read_buff);
+            if (header.header_name < 0)
+            {
+                break;
+            }
+            print_string(&header.header_value);
+            headers[header.header_name] = header.header_value;
+        }
+
+        My_string body;
+
+        read_length(client_sockfd, &fd_read_buff, &body, 5);
+        print_string(&body);
 #if 0
         My_string line;
         int i;
@@ -73,8 +92,6 @@ int main(int argc, char** argv)
         }
 #endif
         
-        print_string(&req_line.path);
-        print_string(&header.header_value);
         write(client_sockfd, resp_buff, strlen(resp_buff));
 
         close(client_sockfd);

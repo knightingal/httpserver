@@ -15,7 +15,7 @@ if __name__ == "__main__":
     request.add_header("Accept-Language", "zh-CN,zh;q=0.8")
     request.add_header("Accept-Charset", "GBK,utf-8;q=0.7,*;q=0.3")
 
-    request.add_data("hello")
+    request.add_data("hello, my name is Knightingal")
     fd = urllib2.urlopen(request)
     net_string = fd.read()
     fd.close()

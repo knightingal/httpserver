@@ -193,6 +193,23 @@ int append_str(My_string* str1, My_string* str2, My_string* ret)
 }
 
 
+int string_to_int(My_string* str, int* output)
+{
+    int ret = 0;
+    int index;
+    for (index = str->start_index; index != str->end_index; index++)
+    {
+        if (str->buff->buff_content[index] > '9' ||
+                str->buff->buff_content[index] < '0')
+        {
+            return -1;
+        }
+        ret = ret * 10 + str->buff->buff_content[index] - '0';
+    }
+    *output = ret;
+    return 0;
+
+}
 #if 0
 int main()
 {

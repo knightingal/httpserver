@@ -78,7 +78,12 @@ int main(int argc, char** argv)
 
         My_string body;
 
-        read_length(client_sockfd, &fd_read_buff, &body, 5);
+        int body_len;
+        if (string_to_int(headers, &body_len) != 0)
+        {
+            break;
+        }
+        read_length(client_sockfd, &fd_read_buff, &body, body_len);
         print_string(&body);
 #if 0
         My_string line;

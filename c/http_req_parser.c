@@ -2,6 +2,7 @@
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 int read_line(int fd, My_string* read_buff, My_string* line)
@@ -290,6 +291,15 @@ int do_request(int fd, Request* request)
 {
     printf("do request\n");
     print_request(request);
+char *resp_buff = "\
+HTTP/1.1 200 OK\r\n\
+Server: nginx/0.8.55\r\n\
+Content-Length: 6\r\n\
+Content-Type: text/html\r\n\
+\r\n\
+123456";
+    write(fd, resp_buff, strlen(resp_buff));
+    close(fd);
     return 0;
 }
 

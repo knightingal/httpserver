@@ -49,7 +49,8 @@ int main(int argc, char** argv)
                 (struct sockaddr*) &client_address, &client_len);
         My_string read_buff;
         Request request;
-        parse_request(client_sockfd, &read_buff, &request); 
+        //parse_request(client_sockfd, &read_buff, &request); 
+        on_request(client_sockfd, &read_buff, do_request);
 #if 0
         int read_len = read(client_sockfd, buff_content, READ_LEN_ONCE);
         if (read_len <= 0)

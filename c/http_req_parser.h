@@ -13,6 +13,7 @@ struct st_req_line
     int version;
 };
 typedef struct st_req_line Req_line;
+void print_req_line(Req_line* req_line);
 
 Req_line get_req_line(int fd, My_string* read_buff);
 
@@ -49,7 +50,9 @@ struct st_Request
     My_string* headers;
     My_string body;
 };
+
 typedef struct st_Request Request;
+void print_request(Request* request);
 
 Header get_header(int fd, My_string* read_buff);
 
@@ -60,5 +63,10 @@ int read_length(int fd, My_string* read_buff, My_string* out_line, int len);
 int Headers_count;
 
 int parse_request(int fd, My_string* read_buff, Request* request);
+
+typedef int (*Request_callback)(int fd, Request* request) ;
+int on_request(int fd, My_string* read_buff, Request_callback do_request);
+
+int do_request(int fd, Request* request);
 
 #endif

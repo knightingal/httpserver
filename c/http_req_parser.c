@@ -143,7 +143,6 @@ Req_line get_req_line(int fd, My_string* read_buff)
     req_line.version = 1;
 
 
-    //to be continue
     return req_line;
 }
     
@@ -276,3 +275,45 @@ int parse_request(int fd, My_string* read_buff, Request* request)
 
 }
     
+int on_request(int fd, My_string* read_buff, Request_callback do_request)
+{
+    Request request;
+    if (parse_request(fd, read_buff, &request) != 0)
+    {
+        return -1;
+    }
+
+    return do_request(fd, &request);
+}
+
+int do_request(int fd, Request* request)
+{
+    printf("do request\n");
+    print_request(request);
+    return 0;
+}
+
+void print_request(Request* request)
+{
+    printf("req line = \n");
+    print_req_line(&(request->req_line));
+
+    printf("\nheaders = \n");
+    int i;
+    for (i = 0; i < HEADER_COUNT; i++)
+    {
+        print_string(request->headers + i);
+    }
+
+    printf("\nbody = \n");
+    print_string(&(request->body));
+}
+
+
+void print_req_line(Req_line* req_line)
+{
+    printf("method = %d\n", req_line->method);
+    printf("path = ");
+    print_string(&(req_line->path));
+}
+

@@ -61,39 +61,30 @@ My_string GET_STR = {&GET_BUFF, 0, 3};
 
 Buff CONTENT_LENGTH_BUFF =      {"Content-Length", 14, 0}; 
 My_string CONTENT_LENGTH_STR = {&CONTENT_LENGTH_BUFF, 0, 14};
-#define CONTENT_LENGTH_INDEX 0
 
 Buff ACCEPT_LANGUAGE_BUFF =     {"Accept-Language", 15, 0}; 
 My_string ACCEPT_LANGUAGE_STR = {&ACCEPT_LANGUAGE_BUFF, 0, 15};
-#define ACCEPT_LANGUAGE_INDEX 1
 
 Buff ACCEPT_ENCODING_BUFF =     {"Accept-Encoding", 15, 0};
 My_string ACCEPT_ENCODING_STR = {&ACCEPT_ENCODING_BUFF, 0, 15};
-#define ACCEPT_ENCODING_INDEX 2
 
 Buff HOST_BUFF =                {"Host", 4, 0};
 My_string HOST_STR = {&HOST_BUFF, 0, 4};
-#define HOST_INDEX 3
 
 Buff ACCEPT_BUFF =              {"Accept", 6, 0};
 My_string ACCEPT_STR = {&ACCEPT_BUFF, 0, 6};
-#define ACCEPT_INDEX 4
 
 Buff USER_AGENG_BUFF =          {"User-Agent", 10, 0};
 My_string USER_AGENG_STR = {&USER_AGENG_BUFF, 0, 10};
-#define USER_AGENG_INDEX 5
 
 Buff ACCPET_CHARSET_BUFF =      {"Accept-Charset", 14, 0};
 My_string ACCPET_CHARSET_STR = {&ACCPET_CHARSET_BUFF, 0, 14};
-#define ACCPET_CHARSET_INDEX 6
 
 Buff CONNECTION_BUFF =          {"Connection", 10, 0};
 My_string CONNECTION_STR = {&CONNECTION_BUFF, 0, 10};
-#define CONNECTION_INDEX 7
 
 Buff CONTENT_TYPE_BUFF =        {"Content-Type", 12, 0};
 My_string CONTENT_TYPE_STR = {&CONTENT_TYPE_BUFF, 0, 12};
-#define CONTENT_TYPE_INDEX 8
 
 My_string* Headers[] = {
     &CONTENT_LENGTH_STR,    
@@ -242,5 +233,46 @@ int read_length(int fd, My_string* read_buff, My_string* out_line, int len)
     return len;
 }
 
+int parse_request(int fd, My_string* read_buff, Request* request)
+{
+    if (get_string_len(read_buff) < 0)
+    {
+        read_buff->buff->buff_content = (char*)malloc(READ_LEN_ONCE * sizeof(char));
+        read_buff->buff->buff_len = READ_LEN_ONCE;
+        read_buff->start_index = 0;
+        read_buff->end_index = 0;
+    }
+    Req_line req_line = get_req_line(fd, read_buff);
+    
+    My_string* headers
+        = (My_string*)malloc(sizeof(My_string) * HEADER_COUNT);
 
+    Header header;
+    while(1)
+    {
+        header = get_header(fd, read_buff);
+        if (header.header_name < 0)
+        {
+            break;
+        }
+        headers[header.header_name] = header.header_value;
+    }
+
+    My_string body;
+    int body_len;
+    if (string_to_int(&headers[CONTENT_LENGTH_INDEX], &body_len) != 0)
+    {
+        return -1;
+    }
+    read_length(fd, read_buff, &body, body_len);
+
+    request->req_line = req_line;
+
+    request->headers = headers;
+
+    request->body = body;
+
+    return 0;
+
+}
     

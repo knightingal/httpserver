@@ -47,6 +47,10 @@ int main(int argc, char** argv)
         client_len = sizeof(client_address);
         client_sockfd = accept(server_sockfd, 
                 (struct sockaddr*) &client_address, &client_len);
+        My_string read_buff;
+        Request request;
+        parse_request(client_sockfd, &read_buff, &request); 
+#if 0
         int read_len = read(client_sockfd, buff_content, READ_LEN_ONCE);
         if (read_len <= 0)
         {
@@ -79,12 +83,13 @@ int main(int argc, char** argv)
         My_string body;
 
         int body_len;
-        if (string_to_int(headers, &body_len) != 0)
+        if (string_to_int(&headers[CONTENT_LENGTH_INDEX], &body_len) != 0)
         {
             break;
         }
         read_length(client_sockfd, &fd_read_buff, &body, body_len);
         print_string(&body);
+#endif
 #if 0
         My_string line;
         int i;

@@ -209,6 +209,13 @@ int parse_request(int fd, My_string* read_buff, Request* request)
     
     My_string* headers
         = (My_string*)malloc(sizeof(My_string) * HEADER_COUNT);
+    int i;
+    for (i = 0; i < HEADER_COUNT; i++)
+    {
+        headers[i].buff = NULL;
+        headers[i].start_index = 0;
+        headers[i].end_index = 0;
+    }
 
     Header header;
     while(1)

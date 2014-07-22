@@ -21,7 +21,9 @@
 
 #define CONTENT_TYPE_INDEX 8
 
-#define HEADER_COUNT 9
+#define SERVER_INDEX 9
+
+#define HEADER_COUNT 10
 
 My_string* Headers[HEADER_COUNT];
 

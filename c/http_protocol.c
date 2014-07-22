@@ -27,6 +27,9 @@ My_string CONNECTION_STR = {&CONNECTION_BUFF, 0, 10};
 Buff CONTENT_TYPE_BUFF =        {"Content-Type", 12, 0};
 My_string CONTENT_TYPE_STR = {&CONTENT_TYPE_BUFF, 0, 12};
 
+Buff SERVER_BUFF =              {"Server", 6, 0};
+My_string SERVER_STR = {&SERVER_BUFF, 0, 6};
+
 My_string* Headers[] = {
     &CONTENT_LENGTH_STR,    
     &ACCEPT_LANGUAGE_STR, 
@@ -36,5 +39,6 @@ My_string* Headers[] = {
     &USER_AGENG_STR, 
     &ACCPET_CHARSET_STR, 
     &CONNECTION_STR, 
-    &CONTENT_TYPE_STR
+    &CONTENT_TYPE_STR,
+    &SERVER_STR
 };

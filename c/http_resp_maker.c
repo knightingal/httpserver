@@ -1,6 +1,7 @@
 #include "http_resp_maker.h"
 #include <stdlib.h>
 #include "my_string.h"
+#include "http_protocol.h"
 
 My_string* RESP_CODE[404];
 void init_RESP_CODE()
@@ -71,5 +72,32 @@ void send_resp(int fd, Response* resp)
             get_string_len(resp_code_str)
     );
     write(fd, "\r\n", 2);
+
+    int i;
+    for (i = 0; i < HEADER_COUNT; i++)
+    {
+        if (resp->headers[i].buff != NULL)
+        {
+            My_string* header_name = Headers[i];
+            My_string* header_value = resp->headers + i;
+            write(
+                fd,
+                header_name->buff->buff_content + header_name->start_index,
+                get_string_len(header_name)
+            );
+            write(fd, ": ", 2);
+            write(fd,
+                header_value->buff->buff_content + header_value->start_index,
+                get_string_len(header_value)
+            );
+            write(fd, "\r\n", 2);
+        }
+    }
+    write(fd, "\r\n", 2);
+    write(fd, 
+            resp->body.buff->buff_content + resp->body.start_index,
+            get_string_len(&(resp->body))
+    );
+
 
 }
